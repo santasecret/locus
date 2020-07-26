@@ -1,0 +1,56 @@
+---
+
+- name: Check if k3s is installed
+  shell: command -v k3s >/dev/null 2>&1
+  register: k3s_exists
+  changed_when: false
+  ignore_errors: yes
+  tags:
+    - always
+
+- name: Debug k3s_exists
+  debug:
+    msg: "{{ k3s_exists.rc }}"
+    verbosity: 1
+
+- name: Download k3s.sh
+  get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s.sh
+    mode: '0755'
+  tags:
+    - reinstall
+    - upgrade
+  when: k3s_exists.rc != 0
+
+- name: Install k3s
+  become: yes
+  shell: "/tmp/k3s.sh"
+  tags:
+    - reinstall
+    - upgrade
+  when: k3s_exists.rc != 0
+
+- name: Fetch kube config
+  become: yes
+  fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: ~/.kube/config
+    flat: yes
+  tags:
+    - get_config
+    - reinstall
+  when: k3s_exists.rc != 0
+
+- name: Fix remote in kube config
+  replace:
+    path: ~/.kube/config
+    regexp: '127.0.0.1'
+    replace: "{{ inventory_hostname }}"
+  tags:
+    - get_config
+    - reinstall
+  delegate_to: localhost
+  when: k3s_exists.rc != 0
+
+...

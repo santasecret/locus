@@ -1,0 +1,72 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-master
+spec:
+  selector:
+    matchLabels:
+      app: drone-master
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: drone-master
+    spec:
+      volumes:
+        - name: drone-data
+          hostPath:
+            path: "/var/k8s-pv/drone"
+            type: DirectoryOrCreate
+
+      containers:
+        - name: drone
+          image: drone/drone:1.9.0
+          env:
+            - name: DRONE_SERVER_PROTO
+              value: http
+            - name: DRONE_SERVER_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: DRONE_SERVER_HOST
+            - name: DRONE_RPC_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: DRONE_RPC_SECRET
+            - name: DRONE_GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: GITHUB_CLIENT_ID
+            - name: DRONE_GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: drone-secrets
+                  key: GITHUB_CLIENT_SECRET
+          ports:
+          - name: liveness-port
+            containerPort: 80
+            protocol: TCP
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: liveness-port
+            failureThreshold: 1
+            periodSeconds: 10
+
+          volumeMounts:
+            - name: drone-data
+              mountPath: /data
+
+      terminationGracePeriodSeconds: 20
+
+...

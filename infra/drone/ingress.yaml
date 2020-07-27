@@ -1,0 +1,25 @@
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: production-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "true"
+    acme.cert-manager.io/http01-ingress-class: traefik
+    cert-manager.io/issuer: letsencrypt-production
+
+spec:
+  rules:
+    - host: drone.codingcoffee.me # TODO
+      http:
+        paths:
+          - backend:
+              serviceName: drone-master
+              servicePort: 80
+  tls:
+    - hosts:
+        - drone.codingcoffee.me # TODO
+      secretName: production-tls-cert
+
+...

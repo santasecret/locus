@@ -1,0 +1,18 @@
+
+- Linux Machine
+
+- Account on [Hetzner](https://console.hetzner.cloud/)
+  - With a HETZNER_API_TOKEN which needs to be placed in `infra/terraform.tfvars`. You can copy the template for the file from `infra/terraform.tfvars.sample`
+  - Also add your public ssh key on Hetzner uner the name SSH_KEY_NAME_AS_ON_HETZNER which needs to be placed in `infra/terraform.tfvars`
+
+- Pre installed tools (speciific versions are not really a necessity, but just putting it out there to ensure a fully replicable setup)
+  - terraform v0.12.28
+  - python v3.8.5
+  - ansible-playbook v2.9.11
+  - kubectl v1.18.5
+  - helm v3.2.4
+
+- Another requiremnt for setting up the CI is `infra/drone/secret.yaml`. You can copy the template for the file from `infra/drone/secret.yaml.sample`
+
+- I have placed a bunch of TODO's over the place. These are 1 time configuration things, which you'll need to modify.
+

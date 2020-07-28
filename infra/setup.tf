@@ -26,7 +26,7 @@ resource "null_resource" "setup_k3s" {
   }
 
   provisioner "local-exec" {
-    command = "sleep 60 && cd ansible && ansible-playbook playbooks/k3s.yml -u root -i ${hcloud_server.locus-n1.ipv4_address}, -v && cd ../cert-manager && sh install_cert_manager.sh && kubectl apply -f issuer.yaml"
+    command = "sleep 60 && cd ansible && ansible-playbook playbooks/k3s.yml -u root -i ${hcloud_server.locus-n1.ipv4_address}, -v && cd ../cert-manager && sh install_cert_manager.sh && sleep 60 && kubectl apply -f issuer.yaml"
   }
 }
 

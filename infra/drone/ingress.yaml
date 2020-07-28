@@ -6,6 +6,8 @@ metadata:
   name: production-ingress
   annotations:
     ingress.kubernetes.io/ssl-redirect: "true"
+    ingress.kubernetes.io/whitelist-x-forwarded-for: "true"
+    ingress.kubernetes.io/ssl-proxy-headers: "X-Forwarded-Proto:https"
     acme.cert-manager.io/http01-ingress-class: traefik
     cert-manager.io/issuer: letsencrypt-production
 

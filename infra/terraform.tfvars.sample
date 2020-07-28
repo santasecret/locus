@@ -1,3 +1,4 @@
 
-hcloud_token = "YOUR_HETZNER_TOKEN"
+hcloud_token = "HETZNER_API_TOKEN"
+ssh_keys = ["SSH_KEY_NAME_AS_ON_HETZNER"]
 
